@@ -1,5 +1,9 @@
 version: "3"
 
+volumes:
+  vendor-volume:
+  cache-volume:
+
 services:
   web:
     image: nginx
@@ -9,7 +13,9 @@ services:
       # ホストのdefault.confを同期
       - ./default.conf:/etc/nginx/conf.d/default.conf
       # ホストの./myappフォルダを同期
-      - ./myapp:/var/www/html/myapp
+      - ./myapp:/var/www/html/myapp:cached
+      - vendor-volume:/var/www/html/myapp/vendor
+      - cache-volume:/var/www/html/myapp/var/cache
     depends_on:
       - php
 
@@ -17,7 +23,9 @@ services:
     build: .
     volumes:
       # ホストの./myappフォルダを同期
-      - ./myapp:/var/www/html/myapp
+      - ./myapp:/var/www/html/myapp:cached
+      - vendor-volume:/var/www/html/myapp/vendor
+      - cache-volume:/var/www/html/myapp/var/cache
 
   db:
     image: mysql:8.0
